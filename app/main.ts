@@ -114,5 +114,5 @@ const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-console.log("Servidor escuchando en http://localhost:8000");
+console.log("Servidor escuchandoooo en http://localhost:8000");
 await app.listen({ port: 8000 });
