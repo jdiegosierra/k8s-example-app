@@ -60,7 +60,7 @@ https://docs.aws.amazon.com/eks/latest/userguide/update-managed-node-group.html
 
 ## 5. AWS App Runner + Amazon RDS (Blue/Green)
 
-![AWS App Runner Architecture](https://docs.aws.amazon.com/apprunner/latest/dg/images/apprunner-architecture.png)
+![AWS App Runner Architecture](https://docs.aws.amazon.com/es_es/apprunner/latest/dg/images/architecture.png)
 
 | **Pros**                                                                          | **Cons**                                                                                 |
 |-----------------------------------------------------------------------------------|------------------------------------------------------------------------------------------|
