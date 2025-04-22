@@ -1,7 +1,7 @@
 replicaCount: 1
 
 image:
-  repository: revolut-app
+  repository: ghcr.io/jdiegosierra/revolut-test
   tag: latest
   pullPolicy: IfNotPresent
 
