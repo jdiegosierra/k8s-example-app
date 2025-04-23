@@ -1,17 +1,20 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import { Client } from "jsr:@bartlomieju/postgres";
+import { Client } from "jsr:@db/postgres";
 
 
 const router = new Router();
 
-console.log("INTENTO 4");
+console.log("INTENTO 5");
 
 const client = new Client({
   user: "postgres",
   password: "O0hhpRDpff3bJdZjZ6Q1trgWD99TfMqIEJDwJ9YBeC9RG6RJEVTzhaWZ5Tjytlh1",
   database: "postgres",
   hostname: "cluster.default.svc.cluster.local",
-  port: 5432
+  port: 5432,
+  tls: {
+    enforce: false,
+  }
 });
 
 // Conectar y crear tabla si no existe
