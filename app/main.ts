@@ -20,7 +20,7 @@ const client = new Client({
 // Conectar y crear tabla si no existe
 await client.connect();
 await client.queryObject(`
-  CREATE TABLE IF NOT EXISTS users (
+  CREATE TABLE IF NOT EXISTS test (
     username TEXT PRIMARY KEY,
     date_of_birth DATE NOT NULL
   );

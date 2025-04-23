@@ -8,8 +8,6 @@ spec:
     size: 1Gi
   numberOfInstances: 2
   databases:
-    foo: postgres  # dbname: owner
-  preparedDatabases:
-    bar: {}
+    postgres: postgres
   postgresql:
     version: "17"
