@@ -1,10 +1,9 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import { Client } from "jsr:@bartlomieju/postgres";
+import { Client } from "https://deno.land/x/postgres/mod.ts";
 
 
 const router = new Router();
 
-console.log("INTENTO 2");
 
 const client = new Client({
   user: "postgres",
@@ -17,7 +16,7 @@ const client = new Client({
 // Conectar y crear tabla si no existe
 await client.connect();
 await client.queryObject(`
-  CREATE TABLE IF NOT EXISTS test (
+  CREATE TABLE IF NOT EXISTS users (
     username TEXT PRIMARY KEY,
     date_of_birth DATE NOT NULL
   );
@@ -116,5 +115,5 @@ const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-console.log("LELELEL http://localhost:8000");
+console.log("Server listening on http://localhost:8000");
 await app.listen({ port: 8000 });
