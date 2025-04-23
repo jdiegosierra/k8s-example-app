@@ -31,12 +31,12 @@ clean: ## Elimina el cluster Kind
 
 install-postgres-operator: ## Instala el Postgres Operator en el cluster
 	@echo "Añadiendo repositorio de Postgres Operator..."
-	@helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+	@helm repo add cloudnative-pg https://cloudnative-pg.io/charts/
 	@echo "Instalando Postgres Operator..."
-	@helm install postgres-operator postgres-operator-charts/postgres-operator --namespace $(POSTGRES_OPERATOR_NAMESPACE) --create-namespace
+	@helm install my-cloudnative-pg cloudnative-pg/cloudnative-pg --version 0.23.2
 	@echo "Postgres Operator instalado exitosamente"
 
 deploy-postgresql: ## Despliega el manifiesto de PostgreSQL
 	@echo "Desplegando manifiesto de PostgreSQL..."
-	@kubectl apply -f $(POSTGRES_MANIFEST_PATH)
+	@@helm install cluster cloudnative-pg/cluster
 	@echo "Manifiesto de PostgreSQL desplegado exitosamente" 

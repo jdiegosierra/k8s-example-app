@@ -4,17 +4,14 @@ import { Client } from "jsr:@bartlomieju/postgres";
 
 const router = new Router();
 
-console.log("INTENTO 13");
+console.log("INTENTO 1");
 
 const client = new Client({
   user: "postgres",
   password: "O0hhpRDpff3bJdZjZ6Q1trgWD99TfMqIEJDwJ9YBeC9RG6RJEVTzhaWZ5Tjytlh1",
   database: "postgres",
-  hostname: "10.244.0.24",
-  port: 5432,
-  tls: {
-    enabled: false
-  }
+  hostname: "cluster-rw.default.svc.cluster.local",
+  port: 5432
 });
 
 // Conectar y crear tabla si no existe
