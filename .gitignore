@@ -16,9 +16,6 @@ kubeconfig
 *.kubeconfig
 .kube/
 
-# Archivos de Kind
-kind-config.yaml
-
 # Archivos de desarrollo local
 .env
 .env.local

@@ -1,42 +1,24 @@
-.PHONY: help create-cluster deploy clean install-postgres-operator deploy-postgresql
+.PHONY: start-local-env delete-local-env deploy-app install-postgres-operator deploy-postgresql
 
-# Variables
+
 CLUSTER_NAME ?= revolut-cluster
-HELM_CHART_PATH ?= helm/app
 KIND_CONFIG_PATH ?= scripts/kind-config.yaml
-POSTGRES_OPERATOR_NAMESPACE ?= postgres-operator
-POSTGRES_MANIFEST_PATH ?= helm/postgres/postgresql.yaml
+HELM_CHART_PATH ?= helm/app
 
-help: ## Muestra esta ayuda
-	@echo 'Uso:'
-	@echo '  make <target>'
-	@echo ''
-	@echo 'Targets:'
-	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-create-cluster: ## Crea un nuevo cluster Kind
-	@echo "Creando cluster Kind..."
+start-local-env:
 	@kind create cluster --name $(CLUSTER_NAME) --config=$(KIND_CONFIG_PATH)
-	@echo "Cluster creado exitosamente"
 
-deploy: ## Despliega el Helm chart en el cluster
-	@echo "Desplegando Helm chart..."
-	@helm upgrade --install revolut-app $(HELM_CHART_PATH) --namespace default --create-namespace
-	@echo "Helm chart desplegado exitosamente"
-
-clean: ## Elimina el cluster Kind
-	@echo "Eliminando cluster Kind..."
+delete-local-env:
 	@kind delete cluster --name $(CLUSTER_NAME)
-	@echo "Cluster eliminado exitosamente"
 
-install-postgres-operator: ## Instala el Postgres Operator en el cluster
-	@echo "Añadiendo repositorio de Postgres Operator..."
+deploy-app:
+	@helm upgrade --install revolut-app $(HELM_CHART_PATH) --namespace default --create-namespace
+
+install-postgres-operator:
 	@helm repo add cloudnative-pg https://cloudnative-pg.io/charts/
-	@echo "Instalando Postgres Operator..."
-	@helm install my-cloudnative-pg cloudnative-pg/cloudnative-pg --version 0.23.2
-	@echo "Postgres Operator instalado exitosamente"
+	@helm upgrade --install my-cloudnative-pg cloudnative-pg/cloudnative-pg --version 0.23.2
 
-deploy-postgresql: ## Despliega el manifiesto de PostgreSQL
-	@echo "Desplegando manifiesto de PostgreSQL..."
-	@@helm install cluster cloudnative-pg/cluster
-	@echo "Manifiesto de PostgreSQL desplegado exitosamente" 
+deploy-postgresql:
+	@helm repo add cloudnative-pg https://cloudnative-pg.io/charts/
+	@helm upgrade --install cluster cloudnative-pg/cluster --set superuserSecret=test

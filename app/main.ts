@@ -7,7 +7,7 @@ const router = new Router();
 
 const client = new Client({
   user: "postgres",
-  password: "0hKlDFWFZbt8R1z4Olx5IqKLCnVuXVpdf57wYksRE3aQaj1XuyB1IkXxKLDBkCiv",
+  password: "test",
   database: "postgres",
   hostname: "cluster-rw.default.svc.cluster.local",
   port: 5432
