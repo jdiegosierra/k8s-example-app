@@ -4,7 +4,7 @@ import { Client } from "jsr:@bartlomieju/postgres";
 
 const router = new Router();
 
-console.log("INTENTO 11");
+console.log("INTENTO 12");
 
 const client = new Client({
   user: "postgres",
