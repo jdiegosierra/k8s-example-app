@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: images/${{ github.repository }}
+  IMAGE_NAME: ${{ github.repository_owner }}/images/${{ github.event.repository.name }}
 
 jobs:
   build-and-push:
@@ -16,6 +16,7 @@ jobs:
     permissions:
       contents: read
       packages: write
+      id-token: write
 
     steps:
       - name: Checkout repository
