@@ -4,11 +4,11 @@ import { Client } from "https://deno.land/x/postgres/mod.ts";
 
 const router = new Router();
 
-console.log("INTENTO 2");
+console.log("INTENTO 3");
 
 const client = new Client({
   user: "postgres",
-  password: "l0gmPj7yQYgJav4ljtI3Wn3KfsPJiLzmvQneaLCYX1SQzGfMf9hdRDrnderVfNsd",
+  password: "O0hhpRDpff3bJdZjZ6Q1trgWD99TfMqIEJDwJ9YBeC9RG6RJEVTzhaWZ5Tjytlh1",
   database: "postgres",
   hostname: "cluster.default.svc.cluster.local",
   port: "5432",

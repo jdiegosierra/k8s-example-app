@@ -6,7 +6,7 @@ spec:
   teamId: "app"
   volume:
     size: 1Gi
-  numberOfInstances: 2
+  numberOfInstances: 1
   databases:
     postgres: postgres
   postgresql:
