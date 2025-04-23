@@ -10,7 +10,7 @@ const client = new Client({
   user: "postgres",
   password: "O0hhpRDpff3bJdZjZ6Q1trgWD99TfMqIEJDwJ9YBeC9RG6RJEVTzhaWZ5Tjytlh1",
   database: "postgres",
-  hostname: "cluster-0.default.pod.cluster.local",
+  hostname: "10.244.0.24",
   port: 5432
 });
 
