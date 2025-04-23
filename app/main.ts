@@ -1,5 +1,5 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import { Client } from "jsr:@bartlomieju/postgres";
+import { Client } from "jsr:@db/postgres";
 
 
 const router = new Router();
@@ -13,6 +13,7 @@ const client = new Client({
   hostname: "cluster.default.svc.cluster.local",
   port: 5432,
   tls: {
+    enforce: false,
     enable: false
   }
 });
