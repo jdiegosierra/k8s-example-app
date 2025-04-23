@@ -4,6 +4,8 @@ import { Client } from "https://deno.land/x/postgres/mod.ts";
 
 const router = new Router();
 
+console.log("INTENTO 1");
+
 const client = new Client({
   user: "postgres",
   password: "l0gmPj7yQYgJav4ljtI3Wn3KfsPJiLzmvQneaLCYX1SQzGfMf9hdRDrnderVfNsd",
