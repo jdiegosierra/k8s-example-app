@@ -10,4 +10,4 @@ spec:
   databases:
     postgres: postgres
   postgresql:
-    version: "17"
+    version: "14"
