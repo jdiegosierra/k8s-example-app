@@ -9,7 +9,10 @@ const client = new Client({
   password: "l0gmPj7yQYgJav4ljtI3Wn3KfsPJiLzmvQneaLCYX1SQzGfMf9hdRDrnderVfNsd",
   database: "postgres",
   hostname: "cluster.default.svc.cluster.local",
-  port: "5432"
+  port: "5432",
+  ssl: {
+    rejectUnauthorized: false
+  }
 });
 
 // Conectar y crear tabla si no existe
