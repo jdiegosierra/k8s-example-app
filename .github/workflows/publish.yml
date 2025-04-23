@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository }}
+  IMAGE_NAME: images/${{ github.repository }}
 
 jobs:
   build-and-push:
@@ -51,12 +51,14 @@ jobs:
           version: '3.12.0'
 
       - name: Package Helm Chart
+        id: package
         run: |
           helm package charts/app -d ./helm-packages
           CHART_VERSION=$(helm show chart charts/app | grep '^version:' | awk '{print $2}')
           CHART_NAME=$(helm show chart charts/app | grep '^name:' | awk '{print $2}')
           mv ./helm-packages/${CHART_NAME}-${CHART_VERSION}.tgz ./helm-packages/${CHART_NAME}.tgz
+          echo "chart_name=${CHART_NAME}" >> $GITHUB_OUTPUT
 
       - name: Push Helm Chart to GitHub Packages
         run: |
-          helm push ./helm-packages/revolut-app.tgz oci://${{ env.REGISTRY }}/${{ github.repository }} 
+          helm push ./helm-packages/${{ steps.package.outputs.chart_name }}.tgz oci://chart/${{ github.repository }} 
