@@ -8,7 +8,7 @@ on:
 
 env:
   REGISTRY: ghcr.io
-  IMAGE_NAME: ${{ github.repository_owner }}/images/${{ github.event.repository.name }}
+  IMAGE_NAME: ${{ github.repository_owner }}/images/app
 
 jobs:
   build-and-push:
@@ -69,4 +69,4 @@ jobs:
 
       - name: Push Helm Chart to GitHub Packages
         run: |
-          helm push ./helm-packages/${{ steps.package.outputs.chart_name }}.tgz oci://chart/${{ github.repository }} 
+          helm push ./helm-packages/revolut-app.tgz oci://chart/${{ github.repository }} 
