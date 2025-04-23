@@ -8,7 +8,7 @@ const client = new Client({
   user: "postgres",
   password: "l0gmPj7yQYgJav4ljtI3Wn3KfsPJiLzmvQneaLCYX1SQzGfMf9hdRDrnderVfNsd",
   database: "postgres",
-  hostname: "cluster.default.svc.cluster.local",
+  hostname: "http://cluster.default.svc.cluster.local",
   port: "5432"
 });
 
@@ -114,5 +114,5 @@ const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-console.log("Servidor escuchando en http://localhost:8000");
+console.log("LELELEL http://localhost:8000");
 await app.listen({ port: 8000 });
