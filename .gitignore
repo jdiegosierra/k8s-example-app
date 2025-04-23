@@ -1,4 +1,3 @@
-# Archivos de Terraform
 .terraform/
 *.tfstate
 *.tfstate.*
@@ -11,12 +10,10 @@ override.tf.json
 .terraformrc
 terraform.rc
 
-# Archivos de Kubernetes
 kubeconfig
 *.kubeconfig
 .kube/
 
-# Archivos de desarrollo local
 .env
 .env.local
 .env.*.local
@@ -26,17 +23,14 @@ kubeconfig
 *.swo
 .DS_Store
 
-# Archivos de logs
 *.log
 logs/
 
-# Archivos de dependencias
 node_modules/
 vendor/
 __pycache__/
 *.pyc
 
-# Archivos de compilación
 dist/
 build/
 *.exe
@@ -44,20 +38,16 @@ build/
 *.so
 *.dylib
 
-# Archivos de caché
 .cache/
 .npm/
 .pnpm-store/
 
-# Archivos de cobertura
 coverage/
 *.lcov
 
-# Archivos de documentación
 docs/_build/
 site/
 
-# Archivos temporales
 tmp/
 temp/
 
