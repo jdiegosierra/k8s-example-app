@@ -1,5 +1,5 @@
 import { Application, Router } from "https://deno.land/x/oak/mod.ts";
-import { Client } from "jsr:@db/postgres";
+import { Client } from "jsr:@bartlomieju/postgres";
 
 
 const router = new Router();
