@@ -63,3 +63,5 @@ site/
 # Archivos temporales
 tmp/
 temp/
+
+deno.lock
