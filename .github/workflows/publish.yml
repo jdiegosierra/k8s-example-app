@@ -59,4 +59,4 @@ jobs:
 
       - name: Push Helm Chart to GitHub Packages
         run: |
-          helm push ./helm-packages/${CHART_NAME}.tgz oci://${{ env.REGISTRY }}/${{ github.repository }} 
+          helm push ./helm-packages/revolut-app.tgz oci://${{ env.REGISTRY }}/${{ github.repository }} 
