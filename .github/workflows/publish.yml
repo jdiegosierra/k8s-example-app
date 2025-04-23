@@ -66,7 +66,47 @@ jobs:
           CHART_NAME=$(helm show chart charts/app | grep '^name:' | awk '{print $2}')
           mv ./helm-packages/${CHART_NAME}-${CHART_VERSION}.tgz ./helm-packages/${CHART_NAME}.tgz
           echo "chart_name=${CHART_NAME}" >> $GITHUB_OUTPUT
+          echo "chart_version=${CHART_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Push Helm Chart to GitHub Packages
         run: |
-          helm push ./helm-packages/${{ steps.package.outputs.chart_name }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts 
+          helm push ./helm-packages/${{ steps.package.outputs.chart_name }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
+
+  create-release:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get Chart Version
+        id: chart
+        run: |
+          CHART_VERSION=$(helm show chart charts/app | grep '^version:' | awk '{print $2}')
+          APP_VERSION=$(helm show chart charts/app | grep '^appVersion:' | awk '{print $2}')
+          echo "chart_version=${CHART_VERSION}" >> $GITHUB_OUTPUT
+          echo "app_version=${APP_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release v${{ steps.chart.outputs.chart_version }}
+          tag_name: v${{ steps.chart.outputs.chart_version }}
+          body: |
+            ## Changes in this version
+            
+            ### Versions
+            - Chart: ${{ steps.chart.outputs.chart_version }}
+            - App: ${{ steps.chart.outputs.app_version }}
+            
+            ### Artifacts
+            - Docker Image: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.chart.outputs.app_version }}`
+            - Helm Chart: `${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/${{ steps.chart.outputs.chart_name }}:${{ steps.chart.outputs.chart_version }}`
+          draft: false
+          prerelease: false
+          generate_release_notes: true 
