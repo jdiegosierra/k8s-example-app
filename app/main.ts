@@ -8,7 +8,7 @@ console.log("INTENTO 1");
 
 const client = new Client({
   user: "postgres",
-  password: "O0hhpRDpff3bJdZjZ6Q1trgWD99TfMqIEJDwJ9YBeC9RG6RJEVTzhaWZ5Tjytlh1",
+  password: "0hKlDFWFZbt8R1z4Olx5IqKLCnVuXVpdf57wYksRE3aQaj1XuyB1IkXxKLDBkCiv",
   database: "postgres",
   hostname: "cluster-rw.default.svc.cluster.local",
   port: 5432
