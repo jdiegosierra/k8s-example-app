@@ -4,7 +4,7 @@ import { Client } from "jsr:@bartlomieju/postgres";
 
 const router = new Router();
 
-console.log("INTENTO 9");
+console.log("INTENTO 10");
 
 const client = new Client({
   user: "postgres",
@@ -13,7 +13,7 @@ const client = new Client({
   hostname: "cluster.default.svc.cluster.local",
   port: 5432,
   tls: {
-    enforce: true,
+    enforce: false,
     enable: true
   }
 });
