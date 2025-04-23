@@ -4,22 +4,22 @@ import { Client } from "https://deno.land/x/postgres/mod.ts";
 
 const router = new Router();
 
-// const client = new Client({
-//   user: Deno.env.get("DB_USER") ?? "postgres",
-//   password: Deno.env.get("DB_PASSWORD") ?? "postgres",
-//   database: Deno.env.get("DB_NAME") ?? "postgres",
-//   hostname: Deno.env.get("DB_HOST") ?? "localhost",
-//   port: parseInt(Deno.env.get("DB_PORT") ?? "5432"),
-// });
+const client = new Client({
+  user: "postgres",
+  password: "l0gmPj7yQYgJav4ljtI3Wn3KfsPJiLzmvQneaLCYX1SQzGfMf9hdRDrnderVfNsd",
+  database: "postgres",
+  hostname: "cluster.default.svc.cluster.local",
+  port: "5432"
+});
 
-// // Conectar y crear tabla si no existe
-// await client.connect();
-// await client.queryObject(`
-//   CREATE TABLE IF NOT EXISTS users (
-//     username TEXT PRIMARY KEY,
-//     date_of_birth DATE NOT NULL
-//   );
-// `);
+// Conectar y crear tabla si no existe
+await client.connect();
+await client.queryObject(`
+  CREATE TABLE IF NOT EXISTS users (
+    username TEXT PRIMARY KEY,
+    date_of_birth DATE NOT NULL
+  );
+`);
 
 // // Función para validar nombre de usuario
 // function isValidUsername(username: string): boolean {
@@ -114,5 +114,5 @@ const app = new Application();
 app.use(router.routes());
 app.use(router.allowedMethods());
 
-console.log("Servidor escuchandoooo en http://localhost:8000");
+console.log("Servidor escuchando en http://localhost:8000");
 await app.listen({ port: 8000 });

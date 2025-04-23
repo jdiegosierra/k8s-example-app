@@ -1,94 +1,42 @@
-.PHONY: kind-create kind-delete deploy-prometheus deploy-grafana deploy-revolut-app clean install-deps help restart
+.PHONY: help create-cluster deploy clean install-postgres-operator deploy-postgresql
 
 # Variables
-KIND_CLUSTER_NAME ?= revolut-cluster
-PROMETHEUS_NAMESPACE ?= monitoring
-GRAFANA_NAMESPACE ?= monitoring
-REVOLUT_APP_NAMESPACE ?= revolut-app
+CLUSTER_NAME ?= revolut-cluster
+HELM_CHART_PATH ?= helm/app
+KIND_CONFIG_PATH ?= scripts/kind-config.yaml
+POSTGRES_OPERATOR_NAMESPACE ?= postgres-operator
+POSTGRES_MANIFEST_PATH ?= helm/postgres/postgresql.yaml
 
-# Ayuda
-help:
-	@echo "Comandos disponibles:"
-	@echo "  make help              - Muestra esta ayuda"
-	@echo "  make install-deps      - Instala las dependencias necesarias (kind, kubectl, helm)"
-	@echo "  make kind-create       - Crea un cluster Kind local"
-	@echo "  make kind-delete       - Elimina el cluster Kind"
-	@echo "  make deploy-prometheus - Despliega Prometheus y Grafana en el cluster"
-	@echo "  make deploy-revolut-app - Despliega la aplicación revolut-app en el cluster"
-	@echo "  make access-grafana    - Muestra información de acceso a Grafana"
-	@echo "  make access-revolut-app - Muestra información de acceso a revolut-app"
-	@echo "  make clean             - Limpia el entorno (elimina el cluster)"
-	@echo "  make all               - Ejecuta el proceso completo (crear cluster y desplegar)"
-	@echo "  make restart           - Reinicia el proceso completo (limpia y ejecuta)"
-	@echo ""
-	@echo "Variables de configuración:"
-	@echo "  KIND_CLUSTER_NAME      - Nombre del cluster Kind (default: revolut-cluster)"
-	@echo "  PROMETHEUS_NAMESPACE   - Namespace para Prometheus (default: monitoring)"
-	@echo "  GRAFANA_NAMESPACE      - Namespace para Grafana (default: monitoring)"
-	@echo "  REVOLUT_APP_NAMESPACE  - Namespace para revolut-app (default: revolut-app)"
+help: ## Muestra esta ayuda
+	@echo 'Uso:'
+	@echo '  make <target>'
+	@echo ''
+	@echo 'Targets:'
+	@awk 'BEGIN {FS = ":.*?## "} /^[a-zA-Z_-]+:.*?## / {printf "  \033[36m%-20s\033[0m %s\n", $$1, $$2}' $(MAKEFILE_LIST)
 
-# Instalar dependencias
-install-deps:
-	@echo "Instalando dependencias..."
-	brew install kind kubectl helm || (echo "Error: Homebrew no está instalado. Por favor, instala Homebrew primero: https://brew.sh/" && exit 1)
-
-# Crear cluster Kind
-kind-create:
+create-cluster: ## Crea un nuevo cluster Kind
 	@echo "Creando cluster Kind..."
-	kind create cluster --name $(KIND_CLUSTER_NAME)
+	@kind create cluster --name $(CLUSTER_NAME) --config=$(KIND_CONFIG_PATH)
+	@echo "Cluster creado exitosamente"
 
-# Eliminar cluster Kind
-kind-delete:
+deploy: ## Despliega el Helm chart en el cluster
+	@echo "Desplegando Helm chart..."
+	@helm upgrade --install revolut-app $(HELM_CHART_PATH) --namespace default --create-namespace
+	@echo "Helm chart desplegado exitosamente"
+
+clean: ## Elimina el cluster Kind
 	@echo "Eliminando cluster Kind..."
-	kind delete cluster --name $(KIND_CLUSTER_NAME)
+	@kind delete cluster --name $(CLUSTER_NAME)
+	@echo "Cluster eliminado exitosamente"
 
-# Crear namespace para monitoring
-create-namespace:
-	@echo "Creando namespace para monitoring..."
-	kubectl create namespace $(PROMETHEUS_NAMESPACE) || true
+install-postgres-operator: ## Instala el Postgres Operator en el cluster
+	@echo "Añadiendo repositorio de Postgres Operator..."
+	@helm repo add postgres-operator-charts https://opensource.zalando.com/postgres-operator/charts/postgres-operator
+	@echo "Instalando Postgres Operator..."
+	@helm install postgres-operator postgres-operator-charts/postgres-operator --namespace $(POSTGRES_OPERATOR_NAMESPACE) --create-namespace
+	@echo "Postgres Operator instalado exitosamente"
 
-# Instalar Prometheus usando Helm
-deploy-prometheus: create-namespace
-	@echo "Instalando Prometheus..."
-	helm repo add prometheus-community https://prometheus-community.github.io/helm-charts
-	helm repo update
-	helm install prometheus prometheus-community/kube-prometheus-stack \
-		--namespace $(PROMETHEUS_NAMESPACE) \
-		--set prometheus.service.type=NodePort \
-		--set prometheus.service.nodePort=30000 \
-		--set grafana.service.type=NodePort \
-		--set grafana.service.nodePort=30001
-
-# Crear namespace para revolut-app
-create-revolut-namespace:
-	@echo "Creando namespace para revolut-app..."
-	kubectl create namespace $(REVOLUT_APP_NAMESPACE) || true
-
-# Desplegar revolut-app
-deploy-revolut-app: create-revolut-namespace
-	@echo "Desplegando revolut-app..."
-	helm install revolut-app ./charts/revolut-app \
-		--namespace $(REVOLUT_APP_NAMESPACE) \
-		--set service.type=NodePort \
-		--set service.nodePort=30002
-
-# Acceder a Grafana
-access-grafana:
-	@echo "Accediendo a Grafana..."
-	@echo "Usuario: admin"
-	@echo "Contraseña: prom-operator"
-	@echo "URL: http://localhost:30001"
-
-# Acceder a revolut-app
-access-revolut-app:
-	@echo "Accediendo a revolut-app..."
-	@echo "URL: http://localhost:30002"
-
-# Limpiar todo
-clean: kind-delete
-
-# Comando por defecto
-all: kind-create deploy-revolut-app
-
-# Reiniciar todo
-restart: clean all
+deploy-postgresql: ## Despliega el manifiesto de PostgreSQL
+	@echo "Desplegando manifiesto de PostgreSQL..."
+	@kubectl apply -f $(POSTGRES_MANIFEST_PATH)
+	@echo "Manifiesto de PostgreSQL desplegado exitosamente" 
