@@ -32,8 +32,8 @@ jobs:
       - name: Get Chart Version
         id: chart
         run: |
-          CHART_VERSION=$(helm show chart charts/app | grep '^version:' | awk '{print $2}')
-          echo "version=${CHART_VERSION}" >> $GITHUB_OUTPUT
+          APP_VERSION=$(helm show chart charts/app | grep '^appVersion:' | awk '{print $2}')
+          echo "version=${APP_VERSION}" >> $GITHUB_OUTPUT
 
       - name: Extract metadata (tags, labels) for Docker
         id: meta

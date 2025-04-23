@@ -1,6 +1,6 @@
 apiVersion: v2
-name: revolut-app
-description: Revolut App
+name: app
+description: App
 type: application
-version: 0.1.0
+version: 1.0.0
 appVersion: "1.0.0"
