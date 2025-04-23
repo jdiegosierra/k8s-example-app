@@ -8,7 +8,7 @@ const client = new Client({
   user: "postgres",
   password: "l0gmPj7yQYgJav4ljtI3Wn3KfsPJiLzmvQneaLCYX1SQzGfMf9hdRDrnderVfNsd",
   database: "postgres",
-  hostname: "http://cluster.default.svc.cluster.local",
+  hostname: "cluster.default.svc.cluster.local",
   port: "5432"
 });
 
