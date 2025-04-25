@@ -36,6 +36,7 @@ Detailed information about best practices and project guidelines can be found in
 - [Secrets Management](docs/secrets.md)
 - [Architecture Diagram](docs/architecture-diagram.md)
 - [Infrastructure as Code](docs/infrastructure-as-code.md)
+- [Cloud Implementation Alternatives](docs/cloud-alternatives.md)
 
 The cloud solution architecture diagram can be found in [docs/architecture-diagram.md](docs/assets/architecture-diagram.md).
 
