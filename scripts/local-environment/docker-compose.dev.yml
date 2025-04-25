@@ -1,0 +1,33 @@
+services:
+  app:
+    build:
+      context: ../..
+      dockerfile: scripts/local-environment/Dockerfile.dev
+    ports:
+      - "8000:8000"
+    volumes:
+      - ../../app:/app
+    environment:
+      - PORT=8000
+      - DB_USER=postgres
+      - DB_PASSWORD=postgres
+      - DB_NAME=postgres
+      - DB_HOST=postgres
+      - DB_PORT=5432
+    depends_on:
+      postgres:
+        condition: service_healthy
+
+  postgres:
+    image: postgres:16-alpine
+    ports:
+      - "5432:5432"
+    environment:
+      - POSTGRES_USER=postgres
+      - POSTGRES_PASSWORD=postgres
+      - POSTGRES_DB=postgres
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres"]
+      interval: 5s
+      timeout: 5s
+      retries: 5

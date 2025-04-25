@@ -1,0 +1,127 @@
+name: Docker and Helm Chart Publish
+
+on:
+  push:
+    branches: [ "main" ]
+
+env:
+  REGISTRY: ghcr.io
+  IMAGE_NAME: ${{ github.repository_owner }}/images/app
+
+jobs:
+  run-tests:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Install Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v2.2.11
+
+      - name: Run tests
+        run: |
+          cd app
+          deno task test
+
+  build-and-push:
+    needs: run-tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Log in to the Container registry
+        uses: docker/login-action@v3
+        with:
+          registry: ${{ env.REGISTRY }}
+          username: ${{ github.actor }}
+          password: ${{ secrets.GITHUB_TOKEN }}
+
+      - name: Get Chart Version
+        id: chart
+        run: |
+          APP_VERSION=$(helm show chart charts/app | grep '^appVersion:' | awk '{print $2}')
+          echo "version=${APP_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Extract metadata (tags, labels) for Docker
+        id: meta
+        uses: docker/metadata-action@v5
+        with:
+          images: ${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}
+          tags: |
+            type=raw,value=${{ steps.chart.outputs.version }}
+            type=raw,value=latest,enable={{is_default_branch}}
+            type=sha,prefix=sha-
+
+      - name: Build and push Docker image
+        uses: docker/build-push-action@v5
+        with:
+          context: .
+          push: true
+          tags: ${{ steps.meta.outputs.tags }}
+          labels: ${{ steps.meta.outputs.labels }}
+
+      - name: Set up Helm
+        uses: azure/setup-helm@v3
+        with:
+          version: '3.12.0'
+
+      - name: Package Helm Chart
+        id: package
+        run: |
+          helm package charts/app -d ./helm-packages
+          CHART_VERSION=$(helm show chart charts/app | grep '^version:' | awk '{print $2}')
+          CHART_NAME=$(helm show chart charts/app | grep '^name:' | awk '{print $2}')
+          mv ./helm-packages/${CHART_NAME}-${CHART_VERSION}.tgz ./helm-packages/${CHART_NAME}.tgz
+          echo "chart_name=${CHART_NAME}" >> $GITHUB_OUTPUT
+          echo "chart_version=${CHART_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Push Helm Chart to GitHub Packages
+        run: |
+          helm push ./helm-packages/${{ steps.package.outputs.chart_name }}.tgz oci://${{ env.REGISTRY }}/${{ github.repository_owner }}/charts
+
+  create-release:
+    needs: build-and-push
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    if: github.ref == 'refs/heads/main'
+
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      - name: Get Chart Version
+        id: chart
+        run: |
+          CHART_VERSION=$(helm show chart charts/app | grep '^version:' | awk '{print $2}')
+          APP_VERSION=$(helm show chart charts/app | grep '^appVersion:' | awk '{print $2}')
+          echo "chart_version=${CHART_VERSION}" >> $GITHUB_OUTPUT
+          echo "app_version=${APP_VERSION}" >> $GITHUB_OUTPUT
+
+      - name: Create Release
+        id: create_release
+        uses: softprops/action-gh-release@v1
+        with:
+          name: Release v${{ steps.chart.outputs.chart_version }}
+          tag_name: v${{ steps.chart.outputs.chart_version }}
+          body: |
+            ## Changes in this version
+            
+            ### Versions
+            - Chart: ${{ steps.chart.outputs.chart_version }}
+            - App: ${{ steps.chart.outputs.app_version }}
+            
+            ### Artifacts
+            - Docker Image: `${{ env.REGISTRY }}/${{ env.IMAGE_NAME }}:${{ steps.chart.outputs.app_version }}`
+            - Helm Chart: `${{ env.REGISTRY }}/${{ github.repository_owner }}/charts/${{ steps.chart.outputs.chart_name }}:${{ steps.chart.outputs.chart_version }}`
+          draft: false
+          prerelease: false
+          generate_release_notes: true 

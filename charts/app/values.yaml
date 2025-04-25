@@ -1,0 +1,21 @@
+replicaCount: 1
+
+image:
+  repository: ghcr.io/jdiegosierra/images/app
+  pullPolicy: IfNotPresent
+
+port: 8000
+
+database:
+  host: cluster-rw.default.svc.cluster.local
+  port: 5432
+  name: postgres
+  secretName: cluster-superuser
+
+resources:
+  limits:
+    # cpu: 500m
+    memory: 512Mi
+  requests:
+    cpu: 200m
+    memory: 256Mi
